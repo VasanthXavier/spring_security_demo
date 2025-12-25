@@ -1,359 +1,262 @@
-Spring Security JWT Demo
+# Spring Security JWT Demo
 
-This project demonstrates a Spring Boot application secured using Spring Security and JWT (JSON Web Token).
+This project demonstrates a **Spring Boot application secured using Spring Security and JWT (JSON Web Token)**.
 It focuses on authentication, authorization, custom security filters, JWT validation, and secured REST APIs using a clean and extensible architecture.
 
 This repository is intended for:
+- Backend / Full Stack interview preparation
+- Learning Spring Security internals
+- Understanding JWT-based authentication
+- Building a base for production-ready security
 
-Backend / Full Stack interview preparation
+---
 
-Learning Spring Security internals
+## Tech Stack
 
-Understanding JWT-based authentication
+- Java
+- Spring Boot
+- Spring Security
+- JWT (JSON Web Token)
+- Maven
 
-Building a base for production-ready security
+---
 
-Tech Stack
-
-Java
-
-Spring Boot
-
-Spring Security
-
-JWT (JSON Web Token)
-
-Maven
-
-Project Overview
+## Project Overview
 
 This application demonstrates:
+- Stateless authentication using JWT
+- Custom authentication and authorization filters
+- Database-backed user authentication
+- Spring Security filter chain configuration
+- Custom error handling for authentication failures
+- Clear separation of concerns (controller, service, security)
 
-Stateless authentication using JWT
+---
 
-Custom authentication and authorization filters
+## High-Level Authentication Flow
 
-Database-backed user authentication
+1. Client sends username and password to authentication API
+2. Spring Security authenticates credentials
+3. JWT token is generated on successful authentication
+4. Client sends JWT token in Authorization header
+5. JWT filter validates token and sets SecurityContext
+6. Secured controllers are accessed only if the token is valid
 
-Spring Security filter chain configuration
+---
 
-Custom error handling for authentication failures
+## Application Architecture
 
-Clear separation of concerns (controller, service, security)
-
-High-Level Authentication Flow
-
-Client sends username and password to authentication API
-
-Spring Security authenticates credentials
-
-JWT token is generated on successful authentication
-
-Client sends JWT token in Authorization header
-
-JWT filter validates token and sets SecurityContext
-
-Secured controllers are accessed only if token is valid
-
-Application Architecture
-
-Client
-→ Authentication Controller
-→ Spring Security Filter Chain
-→ Custom Authentication Filter
-→ JWT Generation
-→ JWT Validation Filter
+Client  
+→ Authentication Controller  
+→ Spring Security Filter Chain  
+→ Custom Authentication Filter  
+→ JWT Generation  
+→ JWT Validation Filter  
 → Secured Controllers
 
-Prerequisites
+---
 
-Java 8 or above
+## Prerequisites
 
-Maven
+- Java 8 or above
+- Maven
+- IDE (IntelliJ / Eclipse / VS Code)
+- Postman or curl
 
-IDE (IntelliJ / Eclipse / VS Code)
+---
 
-Postman or curl
+## How to Run the Application
 
-How to Run the Application
-
-Clone the repository:
-
+### Clone the repository
+```
 git clone https://github.com/VasanthXavier/spring_security_demo.git
-
 cd spring_security_demo
+```
 
-Build and run:
-
+### Build and run
+```
 mvn clean install
 mvn spring-boot:run
+```
 
 Application runs on:
-
+```
 http://localhost:8080
+```
 
-Application Entry Point
+---
+
+## Application Entry Point
 
 The application is bootstrapped using the Spring Boot entry point:
 
-SpringSecurityDemoApplication
+**SpringSecurityDemoApplication**
 
 This class initializes the Spring context and starts the embedded server.
 
-Application Configuration
+---
 
-Configuration is managed using application.properties.
+## Application Configuration
+
+Configuration is managed using `application.properties`.
 
 Typical configurations include:
-
-Server port
-
-JWT secret and expiration
-
-Database configuration (if enabled)
+- Server port
+- JWT secret and expiration
+- Database configuration (if enabled)
 
 Example:
-
+```
 server.port=8080
-
 jwt.secret=******
 jwt.expiration=******
+```
 
-Note:
+**Note:**  
 Sensitive values such as JWT secrets should be externalized using environment variables in production environments.
 
-Maven Dependencies
+---
+
+## Maven Dependencies
 
 Key dependencies used in this project:
-
-spring-boot-starter-web
-
-spring-boot-starter-security
-
-spring-boot-starter-data-jpa
-
-jjwt (JSON Web Token)
-
-lombok
+- spring-boot-starter-web
+- spring-boot-starter-security
+- spring-boot-starter-data-jpa
+- jjwt (JSON Web Token)
+- lombok
 
 Dependency management is handled by Spring Boot.
 
-Security Configuration
+---
 
-Security is configured using SecurityFilterChain
+## Security Configuration
 
-Stateless authentication (no HTTP session)
+- Security is configured using `SecurityFilterChain`
+- Stateless authentication (no HTTP session)
+- Custom authentication filter for login
+- JWT validation filter for secured APIs
+- CSRF disabled (API-based application)
 
-Custom authentication filter for login
+### Key Security Components
+- SecurityConfig
+- SeverAuthenticationFilter
+- JwtFilter
+- JwtService
 
-JWT validation filter for secured APIs
+---
 
-CSRF disabled (API-based application)
+## Authentication Mechanism
 
-Key security components:
-
-SecurityConfig
-
-SeverAuthenticationFilter
-
-JwtFilter
-
-JwtService
-
-Authentication Mechanism
-
-Authentication is JWT-based
-
-Credentials are validated using MyUserDetailsService
-
-Users are loaded from database via UserRepo
-
-JWT token is generated after successful authentication
-
-JWT token is validated on every secured request
+- Authentication is JWT-based
+- Credentials are validated using `MyUserDetailsService`
+- Users are loaded from database via `UserRepo`
+- JWT token is generated after successful authentication
+- JWT token is validated on every secured request
 
 Authorization header format:
-
+```
 Authorization: Bearer <JWT_TOKEN>
+```
 
-API Documentation
-Base URL
+---
 
+## API Documentation
+
+### Base URL
+```
 http://localhost:8080
+```
 
-1. Public API
-   GET /about
+---
 
-Authentication: Not Required
+## 1. Public API
 
-Description:
+### GET /about
+
+Authentication: **Not Required**
+
+Description:  
 Public endpoint to verify application availability.
 
 Sample Request:
-
+```
 curl http://localhost:8080/about
+```
 
 Sample Response:
-
+```
 Welcome to Spring Security Demo
+```
 
-2. Authentication API
-   POST /authenticate
+---
 
-Authentication: Not Required
+## 2. Authentication API
 
-Description:
+### POST /authenticate
+
+Authentication: **Not Required**
+
+Description:  
 Authenticates user credentials and generates a JWT token.
 
 Request Payload:
-
+```json
 {
-"username": "user",
-"password": "password"
+  "username": "user",
+  "password": "password"
 }
+```
 
 Sample Request:
-
-curl -X POST http://localhost:8080/authenticate
-
--H "Content-Type: application/json"
+```
+curl -X POST http://localhost:8080/authenticate \
+-H "Content-Type: application/json" \
 -d '{"username":"user","password":"password"}'
+```
 
 Successful Response:
-
+```
 <JWT_TOKEN>
+```
 
-Example:
+---
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+## 3. Secured API
 
-Error Response (Invalid Credentials):
+### GET /users
 
-{
-"message": "Invalid username or password",
-"status": 401
-}
+Authentication: **Required (JWT)**
 
-3. Secured API
-   GET /users
-
-Authentication: Required (JWT)
-
-Description:
+Description:  
 Returns list of users.
 Accessible only with a valid JWT token.
 
 Required Header:
-
+```
 Authorization: Bearer <JWT_TOKEN>
+```
 
-Sample Request:
+---
 
-curl http://localhost:8080/users
+## Error Handling
 
--H "Authorization: Bearer <JWT_TOKEN>"
+- Custom error response using `ErrorResponse`
+- Authentication failures return structured JSON
+- Invalid or expired tokens return HTTP 401
+- Unauthorized access returns HTTP 403
 
-Sample Response:
+---
 
-[
-{
-"id": 1,
-"username": "user",
-"email": "user@example.com
-"
-},
-{
-"id": 2,
-"username": "admin",
-"email": "admin@example.com
-"
-}
-]
+## HTTP Status Codes
 
-Error Handling
+- 200 – Success
+- 400 – Bad Request
+- 401 – Unauthorized
+- 403 – Forbidden
 
-Custom error response using ErrorResponse
+---
 
-Authentication failures return structured JSON
-
-Invalid or expired tokens return HTTP 401
-
-Unauthorized access returns HTTP 403
-
-HTTP Status Codes
-
-200 – Success
-400 – Bad Request
-401 – Unauthorized
-403 – Forbidden
-
-Folder Structure
-
-spring_security_demo
-└── src
-└── main
-└── java
-└── com.vax.spring_security_demo
-├── config
-├── controller
-├── filter
-├── model
-├── repository
-├── service
-└── security
-
-Key Classes Explained
-
-SecurityConfig – Defines security rules and filter chain
-
-SeverAuthenticationFilter – Handles login authentication
-
-JwtFilter – Validates JWT token for secured requests
-
-JwtService – Generates and validates JWT tokens
-
-MyUserDetailsService – Loads user details from database
-
-UserPrincipal – Custom UserDetails implementation
-
-Security Characteristics
-
-Stateless authentication
-
-JWT-based authorization
-
-No session storage
-
-Scalable and production-ready design
-
-Easily extensible for roles and permissions
-
-Future Enhancements
-
-Refresh token support
-
-Role-based authorization using @PreAuthorize
-
-Swagger (OpenAPI) documentation
-
-Password hashing improvements
-
-Token expiration and revocation strategy
-
-Interview Notes
-
-This project demonstrates:
-
-Strong understanding of Spring Security
-
-JWT authentication and authorization flow
-
-Custom filter implementation
-
-Secure REST API design
-
-Real-world backend security practices
-
-License
+## License
 
 Open-source project for learning and demonstration purposes.
